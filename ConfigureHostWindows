@@ -5,3 +5,30 @@ You need to create and activate a WinRM listener. More details, see WinRM Listen
 To view the current listeners that are running on the WinRM service:
 winrm enumerate winrm/config/Listener                                     $PS Command
 Now Install Openssh
+open commandline and run following commands
+winrm quickconfig
+net start winrm
+winrm set winrm/config/service/auth @{Basic="true"}
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+netsh advfirewall firewall add rule name="WinRM" dir=in localport=5985 protocol=TCP action=allow
+Restart-Service WinRM
+
+
+Now create a inventoryfile
+vim host.ini
+[Windows]
+host1 ansible_host=10.2.28.220 ansible_user=Administrator ansible_password=Bayer@5678
+
+[all_servers:children]
+Windows
+
+[all_servers:vars]
+ansible_port=5985
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+:wq
+
+Now test using ping module:
+ansible Windows -m win_ping -i win.ini
+
+
