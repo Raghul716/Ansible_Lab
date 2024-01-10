@@ -16,8 +16,8 @@ Restart-Service WinRM
 
 Now create a inventoryfile
 vim host.ini
-[Windows]
-host1 ansible_host=10.2.28.220 ansible_user=Administrator ansible_password=Bayer@5678
+[Windows]                                                                           #definedNameforgroupofHosts
+host1 ansible_host=10.2.28.220 ansible_user=Administrator ansible_password=Bayer@5678                   #HostDetails
 
 [all_servers:children]
 Windows
@@ -31,4 +31,22 @@ ansible_winrm_server_cert_validation=ignore
 Now test using ping module:
 ansible Windows -m win_ping -i win.ini
 
+
+Typical yaml file
+
+root@master-Virtual-Machine:/home/master/ansible/ansible# vim note.yaml
+---
+- name: Open Notepad and display text
+  hosts: server                                    #Here server is defined name of group of hosts
+  gather_facts: false
+  tasks:
+    - name: Open Notepad
+      win_shell: Start-Process notepad.exe
+      async: 600
+      poll: 0
+
+    - name: Display text in Notepad
+      win_shell: |
+        Add-Content -Path "$env:TEMP\ansible_notepad_text.txt" -Value "Hello, who has logged in the machine ?"
+        Start-Process notepad.exe "$env:TEMP\ansible_notepad_text.txt"
 
