@@ -37,7 +37,7 @@ Typical yaml file
 root@master-Virtual-Machine:/home/master/ansible/ansible# vim note.yaml
 ---
 - name: Open Notepad and display text
-  hosts: server                                    #Here server is defined name of group of hosts
+  hosts: Windows                                    #Here server is defined name of group of hosts
   gather_facts: false
   tasks:
     - name: Open Notepad
