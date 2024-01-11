@@ -1,0 +1,24 @@
+---
+- name: Launch EC2 Instance
+  hosts: localhost
+  connection: local
+
+  vars:
+    aws_region: "ap-south-1"
+    instance_type: t2.micro
+    image_id: ami-0f5ee92e2d63afc18
+    vpc_subnet_id: subnet-0ab40550fee88ed25
+    key_name: Secondpair
+    security_group: sg-0d6e4bce93091023c
+
+  tasks:
+    - name: Launch EC2 instance
+      community.aws.ec2_instance:
+        region: "{{ aws_region }}"
+        instance_type: "{{ instance_type }}"
+        image:
+          id: "{{ image_id }}"
+        key_name: "{{ key_name }}"
+        security_group: "{{ security_group }}"
+        vpc_subnet_id: "{{ vpc_subnet_id }}"
+        count: 1

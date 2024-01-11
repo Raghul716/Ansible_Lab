@@ -1,0 +1,11 @@
+---
+- name: Create Folder on Windows Host
+  hosts: windows
+  gather_facts: no  # We don't need to gather facts for this example
+
+  tasks:
+    - name: Create a folder
+      win_file:
+        path: C:\Munna-Resign-DueToRaghul
+        state: directory
+

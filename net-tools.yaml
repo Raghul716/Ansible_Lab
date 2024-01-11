@@ -1,0 +1,17 @@
+---
+- name: Install net-tools on Ubuntu and CentOS
+  hosts: UbuntuOS, CentOS
+  become: true  # Enable privilege escalation
+
+  tasks:
+    - name: Update apt cache on Ubuntu
+      when: ansible_distribution == 'Ubuntu'
+      apt:
+        update_cache: yes
+      become: true
+
+    - name: Install net-tools package
+      package:
+        name: net-tools
+        state: present
+

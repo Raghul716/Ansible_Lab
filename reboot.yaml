@@ -1,0 +1,11 @@
+---
+- name: Reboot Windows Host
+  hosts: win19
+  gather_facts: no
+
+  tasks:
+    - name: Reboot the system
+      win_reboot:
+        connect_timeout: 300  # Timeout for connecting to the host
+        reboot_timeout: 600   # Timeout for the host to reboot
+

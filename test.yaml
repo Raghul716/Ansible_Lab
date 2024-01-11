@@ -1,0 +1,22 @@
+---
+- name: Windows Host Demo
+  hosts: win19
+  gather_facts: yes  # Collect facts about the target host
+
+  tasks:
+    - name: Ping the Windows hosts
+      win_ping:
+      register: ping_result  # Save the result to a variable
+
+    - name: Display ping result
+      debug:
+        var: ping_result
+
+    - name: Get list of running processes
+      win_shell: Get-Process
+      register: process_output
+
+    - name: Display process output
+      debug:
+        var: process_output.stdout_lines
+...

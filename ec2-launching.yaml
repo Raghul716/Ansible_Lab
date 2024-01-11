@@ -1,0 +1,28 @@
+---
+- name: Launch EC2 Instance
+  hosts: localhost
+  connection: local
+
+  vars:
+        aws_region: "ap-south-1"
+        instance_type: t2.micro
+        image_id: ami-0f5ee92e2d63afc18
+        vpc_subnet_id: subnet-0ab40550fee88ed25
+        key_name: Secondpair.pem
+        security_group: sg-0d6e4bce93091023c
+        
+  tasks:
+  - name: Launch EC2 instance
+    ec2:
+        aws_access_key: "{{ lookup('env', 'AWS_Access_Key_ID') }}"
+        aws_secret_key: "{{ lookup('env', 'AWS_Secret_Access_Key'}}"
+        region: "{{ aws_region }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image_id }}"
+        key_name: "{{ key_name }}"
+        security_group: "{{ security_group }}"
+        vpc_subnet_id: "{{ vpc_subnet_id }}"
+        assign_public_ip: yes
+        count: 1
+        register: ec2_instance
+...   

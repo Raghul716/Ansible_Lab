@@ -1,0 +1,15 @@
+---
+- name: Open Notepad and display text
+  hosts: server
+  gather_facts: false
+  tasks:
+    - name: Open Notepad
+      win_shell: Start-Process notepad.exe
+      async: 600
+      poll: 0
+
+    - name: Display text in Notepad
+      win_shell: |
+        Add-Content -Path "$env:TEMP\ansible_notepad_text.txt" -Value "Hello, who has logged in the machine ?"
+        Start-Process notepad.exe "$env:TEMP\ansible_notepad_text.txt"
+

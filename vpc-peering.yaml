@@ -1,0 +1,68 @@
+---
+- name: Create VPCs and Peer Them
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Create First VPC
+      ec2_vpc_net:
+        name: Munna
+        cidr_block: "10.5.0.0/16"
+        region: "us-east-1"
+      register: vpc1
+
+    - name: Create Second VPC
+      ec2_vpc_net:
+        name: Sayali
+        cidr_block: "10.6.0.0/16"
+        region: "us-east-1"
+      register: vpc2
+
+    - name: Display VPC IDs
+      debug:
+        msg: "VPC1 ID: {{ vpc1.vpc.id }}, VPC2 ID: {{ vpc2.vpc.id }}"
+
+
+    - name: Create Subnet
+      ec2_vpc_subnet:
+        region: us-east-1
+        vpc_id: "{{ vpc1.vpc.id }}"
+        cidr: 10.5.0.0/24
+        map_public: true
+        tags:
+          Name: Munna-pub
+      register: subnet1
+
+    - debug:
+        var: subnet1
+
+    - name: Create Subnet
+      ec2_vpc_subnet:
+        region: us-east-1
+        vpc_id: "{{ vpc2.vpc.id }}"
+        cidr: 10.6.0.0/24
+        map_public: true
+        tags:
+          Name: Sayali-pub
+      register: subnet2
+
+    - debug:
+        var: subnet2
+
+
+    - name: Peer VPCs
+      ec2_vpc_peer:
+        vpc_id: "{{ vpc1.vpc.id }}"
+        peer_vpc_id: "{{ vpc2.vpc.id }}"
+        region: "us-east-1"
+      register: vpc_peering
+
+    - debug:
+        var: vpc_peering
+
+
+    - name: Accept local VPC peering request
+      ec2_vpc_peer:
+        region: us-east-1
+        peering_id: "{{ vpc_peering.peering_id }}"
+        state: accept
+      register: action_peer

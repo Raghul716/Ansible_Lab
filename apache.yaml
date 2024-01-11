@@ -1,0 +1,57 @@
+---
+- name: Install apache on Ubuntu and CentOS
+  hosts: UbuntuOS, CentOS
+  become: true
+
+  tasks:
+  - name: Install Apache
+    apt:
+      name: apache2
+      state: latest
+    when: ansible_os_family == "Debian"
+
+  - name: Start apache
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+    when: ansible_os_family == "Debian"
+
+  - name: Install Apache
+    yum:
+      name: httpd
+      state: latest
+    when: ansible_os_family == "RedHat"
+
+  - name: Start httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_os_family == "RedHat"
+
+
+  - name: Verify Apache is running
+    command: systemctl status apache2
+    when: ansible_os_family == "Debian"
+    register: apache_status
+
+  - name: Display Apache status
+    debug:
+      var: apache_status.stdout
+
+  - name: Verify Apache is running
+    command: systemctl status httpd
+    when: ansible_os_family == "RedHat"
+    register: apache_status2
+
+  - name: Display Apache status
+    debug:
+      var: apache_status2.stdout
+
+
+  - name: Create content
+    template:
+      src: /var/www/html/tp.html
+      dest: /var/www/html/details.html
+

@@ -1,0 +1,26 @@
+---
+- name: Launch EC2 Instances in VPC
+  hosts: localhost
+
+  tasks:
+    - name: Create VPC
+      ec2_vpc_net:
+        name: Raghyaa-ka-VPC
+        cidr_block: 10.0.0.0/16
+        region: ap-south-1
+      register: vpc
+
+    - debug:
+        var: vpc.vpc.id
+
+    - name: Create Subnet
+      ec2_vpc_subnet:
+        region: ap-south-1
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.0.100.0/24
+        map_public: true
+        name: Raghyaa-public
+      register: subnet
+
+    - debug:
+        var: subnet
