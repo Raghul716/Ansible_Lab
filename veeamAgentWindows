@@ -1,0 +1,24 @@
+---
+- name: Install Veeam Agent on Windows using Chocolatey
+  hosts: windows_servers  # Replace with your target Windows host or host group
+  gather_facts: false     # Disable fact gathering for Windows hosts
+
+  tasks:
+    - name: Install Veeam Agent using Chocolatey
+      win_chocolatey:
+        name: veeamendpointbackup-free
+        state: present
+        version: "{{ veeam_agent_version }}"  # Specify the version if needed
+        force: yes
+
+    - name: Disable auto-updates for Veeam Agent (optional)
+      win_registry:
+        path: "HKLM:\SOFTWARE\Veeam\Veeam Endpoint Backup"
+        name: UpdateToNewVersions
+        data: 0
+        type: dword
+
+    - name: Remove temporary files (optional)
+      win_file:
+        path: "C:\\Temp\\veeam_agent_windows.zip"
+        state: absent
