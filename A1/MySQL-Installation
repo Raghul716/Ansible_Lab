@@ -1,0 +1,13 @@
+---
+- name: Install MySQL server on slave2
+  hosts: slave2
+  become: true  # Allow tasks with root privileges
+
+  tasks:
+    - name: Update package lists
+      apt: update_cache=yes
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
