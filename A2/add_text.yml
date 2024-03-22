@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Add text to /tmp.1.txt
+      script: add_testscript.sh
