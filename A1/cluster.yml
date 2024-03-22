@@ -1,0 +1,16 @@
+---
+- name: Cluster Setup
+  hosts: all
+  become: true  # Allow tasks with root privileges
+  tasks:
+    - name: Update package lists
+      apt: update_cache=yes
+
+    - name: Install basic packages
+      package:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:  # Define common packages here (e.g., python, git)
+          - vim
+          - wget
