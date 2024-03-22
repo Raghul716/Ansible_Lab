@@ -1,1 +1,59 @@
 
+Created three instances in AWS EC2 in same AZ
+
+Install Ansible in master
+sudo apt update
+sudo apt install python3
+
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+
+Now create a SSH connectivity with each of the instances 
+master node
+# ssh-keygen
+# cat ./.ssh/id_rsa.pub
+Copy the content
+paste it in Slave node
+sudo nano /.ssh/authorized_keys
+
+now in the ansible hosts file 
+# vim /etc/ansible/hosts
+
+[slave1]
+172.31.41.238
+
+[slave2]
+172.31.45.11
+
+[Control]
+localhost
+
+now try the ping module
+# ansible -m ping all
+
+Output should be as below
+
+ansible -m ping all
+localhost | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+172.31.45.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+172.31.41.238 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
