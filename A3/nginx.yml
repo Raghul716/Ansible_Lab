@@ -1,0 +1,14 @@
+---
+- name: Install and configure Nginx
+  hosts: slave2
+  become: true
+
+  tasks:
+  - name: Update cache
+    apt: update_cache=yes
+
+  - name: Install Nginx
+    apt: name=nginx state=present
+
+  - name: enable and start nginx
+    service: name=nginx state=started
