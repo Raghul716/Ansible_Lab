@@ -1,0 +1,13 @@
+[slave1]
+172.31.41.238
+
+[slave2]
+172.31.45.11
+
+[all]
+172.31.41.238
+172.31.45.11
+localhost
+
+[control]
+localhost
