@@ -1,0 +1,6 @@
+Installing PHP using ansible:
+If the codename of debian OS is missing from the repository URL 
+then manually edit the repos
+sudo nano /etc/apt/sources.list.d/packages_sury_org_php.list
+deb https://packages.sury.org/php/ bookworm main
+then run the playbook installphp.yaml
