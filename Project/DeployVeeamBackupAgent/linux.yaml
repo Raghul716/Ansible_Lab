@@ -1,0 +1,88 @@
+---
+- name: Deploy Veeam Agent for Linux
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Ensure system is updated
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure system is updated
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Install required packages for Veeam Agent (Debian-based)
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - wget
+        - gnupg2
+        - lsb-release
+      when: ansible_os_family == "Debian"
+
+    - name: Install required packages for Veeam Agent (RHEL-based)
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - epel-release
+        - wget
+        - lsb-release
+      when: ansible_os_family == "RedHat"
+
+    - name: Add Veeam repository and import key (Debian-based)
+      apt_repository:
+        repo: "deb http://repository.veeam.com/backup/linux/agent/dpkg/debian/public {{ ansible_distribution_release }} veeam"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add Veeam repository (RHEL-based)
+      yum_repository:
+        name: veeam
+        description: "Veeam Agent for Linux"
+        baseurl: "http://repository.veeam.com/backup/linux/agent/rpm/el/7/x86_64/"
+        gpgcheck: yes
+        gpgkey: https://repository.veeam.com/backup/linux/agent/rpm/el/7/x86_64/repodata/repomd.xml.key
+        enabled: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install Veeam Agent (Debian-based)
+      apt:
+        name: veeam
+        state: latest
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Veeam Agent (RHEL-based)
+      yum:
+        name: veeam
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Enable and start Veeam service (Debian-based)
+      systemd:
+        name: veeamservice
+        enabled: yes
+        state: started
+      when: ansible_os_family == "Debian"
+
+    - name: Enable and start Veeam service (RHEL-based)
+      systemd:
+        name: veeamservice
+        enabled: yes
+        state: started
+      when: ansible_os_family == "RedHat"
+
+    - name: Confirm Veeam Agent installation
+      command: veeamconfig version
+      register: veeam_version
+
+    - name: Show installed Veeam Agent version
+      debug:
+        msg: "Veeam Agent version installed: {{ veeam_version.stdout }}"
