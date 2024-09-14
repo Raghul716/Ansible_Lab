@@ -1,0 +1,32 @@
+---
+- name: Deploy Veeam Agent for Windows
+  hosts: windows
+  gather_facts: false
+  become: yes
+  tasks:
+
+    - name: Ensure the Veeam Agent installer is downloaded
+      win_get_url:
+        url: "https://download.veeam.com/veeam-agent-for-windows/v6.0.2.1090/veeam.agent.windows.6.0.2.1090.exe"
+        dest: "C:\\temp\\veeam_agent_installer.exe"
+
+    - name: Install Veeam Agent for Windows
+      win_package:
+        path: "C:\\temp\\veeam_agent_installer.exe"
+        product_id: "{A93D2859-98B1-48F5-8A6F-AD0D060F927F}"
+        arguments: /silent
+        state: present
+
+    - name: Ensure Veeam Agent service is running
+      win_service:
+        name: "VeeamEndpointBackupSvc"
+        start_mode: auto
+        state: started
+
+    - name: Verify Veeam Agent installation
+      win_shell: 'Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Veeam Agent*" }'
+      register: veeam_version
+
+    - name: Show installed Veeam Agent version
+      debug:
+        msg: "Veeam Agent version installed: {{ veeam_version.stdout }}"
